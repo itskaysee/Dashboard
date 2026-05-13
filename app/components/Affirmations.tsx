@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const AFFIRMATIONS = [
   "I am building wealth and abundance every single day.",
@@ -40,67 +40,56 @@ export default function Affirmations() {
   }, []);
 
   return (
-    <div className="glass rounded-2xl p-6 relative overflow-hidden">
-      {/* glow bg */}
+    <div className="flex items-center gap-3">
+      <button
+        onClick={() => go(-1)}
+        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
+        style={{ background: "rgba(255,255,255,0.6)", border: "1px solid #ebe6dd" }}
+      >
+        <ChevronLeft size={14} style={{ color: "#a2998f" }} />
+      </button>
+
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
+        className="flex-1 rounded-xl px-5 py-3 text-center"
         style={{
-          background:
-            "radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.4) 0%, transparent 70%)",
+          background: "rgba(255,255,255,0.55)",
+          border: "1px solid rgba(235,230,221,0.7)",
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
         }}
-      />
-
-      <div className="relative z-10 flex items-center gap-4">
-        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center">
-          <Sparkles size={18} className="text-violet-400" />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <p className="section-label mb-1">Daily Affirmation</p>
-          <p
-            className="text-base font-medium text-slate-100 leading-snug transition-opacity duration-300"
-            style={{ opacity: fading ? 0 : 1 }}
-          >
-            &ldquo;{AFFIRMATIONS[index]}&rdquo;
-          </p>
-        </div>
-
-        <div className="flex gap-1 flex-shrink-0">
-          <button
-            onClick={() => go(-1)}
-            className="w-7 h-7 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
-          >
-            <ChevronLeft size={14} className="text-slate-400" />
-          </button>
-          <button
-            onClick={() => go(1)}
-            className="w-7 h-7 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
-          >
-            <ChevronRight size={14} className="text-slate-400" />
-          </button>
+      >
+        <p
+          className="leading-relaxed transition-opacity duration-300"
+          style={{ opacity: fading ? 0 : 1, color: "#785b4e", fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", fontWeight: 700, fontStyle: "italic" }}
+        >
+          &ldquo;{AFFIRMATIONS[index]}&rdquo;
+        </p>
+        <div className="flex justify-center gap-1 mt-2.5">
+          {AFFIRMATIONS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setFading(true);
+                setTimeout(() => { setIndex(i); setFading(false); }, 250);
+              }}
+              className="rounded-full transition-all duration-200"
+              style={{
+                width: i === index ? "16px" : "4px",
+                height: "4px",
+                background: i === index ? "#d68d84" : "#e8dfcf",
+              }}
+            />
+          ))}
         </div>
       </div>
 
-      {/* dot indicators */}
-      <div className="relative z-10 flex justify-center gap-1 mt-4">
-        {AFFIRMATIONS.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              setFading(true);
-              setTimeout(() => {
-                setIndex(i);
-                setFading(false);
-              }, 250);
-            }}
-            className="w-1.5 h-1.5 rounded-full transition-all duration-200"
-            style={{
-              background: i === index ? "#8b5cf6" : "rgba(255,255,255,0.2)",
-              transform: i === index ? "scale(1.3)" : "scale(1)",
-            }}
-          />
-        ))}
-      </div>
+      <button
+        onClick={() => go(1)}
+        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
+        style={{ background: "rgba(255,255,255,0.6)", border: "1px solid #ebe6dd" }}
+      >
+        <ChevronRight size={14} style={{ color: "#a2998f" }} />
+      </button>
     </div>
   );
 }

@@ -1,122 +1,107 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-inter: "Inter", system-ui, sans-serif;
-  --font-bricolage: "Bricolage Grotesque", system-ui, sans-serif;
+  /* Page */
+  --page-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-surface: #f9f7ef;
+  --card-hover: #f6efdf;
+
+  /* Borders & shadows */
+  --border: #ebe6dd;
+  --border-hover: #cbb8ad;
+  --shadow: 0 1px 8px rgba(120, 91, 78, 0.06);
+  --shadow-hover: 0 4px 20px rgba(120, 91, 78, 0.10);
+
+  /* Typography */
+  --text-primary: #785b4e;
+  --text-secondary: #9c948a;
+  --text-muted: #a2998f;
+  --text-faint: #c5b9ab;
+
+  /* Accent palette — Earthwoven Neutrals */
+  --rose:  #d68d84;   /* Deep Rose Dust */
+  --terra: #e1ad9d;   /* Terra Cotta Pink */
+  --peach: #f5cdbc;   /* Pale Peach */
+  --sage:  #8e967d;   /* Moss Green */
+  --olive: #7a816c;   /* Olive Green */
+  --dk-olive: #5f6452; /* Dark Olive */
+  --tan:   #cfbb9f;   /* Tan */
+  --brown: #866a5b;   /* Warm Brown */
+  --cream: #f6efdf;   /* Cream */
+  --wheat: #e8dfcf;   /* Wheat Beige */
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html,
-body {
-  background: #06060f;
-  color: #f1f5f9;
+html, body {
+  background: var(--page-bg);
+  color: var(--text-primary);
   font-family: "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
-  border-radius: 2px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
-}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(214, 141, 132, 0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(214, 141, 132, 0.6); }
 
-/* Glass card */
+/* Card */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
-
-.glass-hover {
-  transition: all 0.2s ease;
-}
+.glass-hover { transition: all 0.2s ease; }
 .glass-hover:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--card-hover);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-hover);
 }
 
-/* Gradient text */
+/* Text */
 .gradient-text {
-  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  background: linear-gradient(135deg, #d68d84, #e1ad9d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.gradient-text-gold {
-  background: linear-gradient(135deg, #f59e0b, #fbbf24);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .gradient-text-green {
-  background: linear-gradient(135deg, #10b981, #34d399);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #8e967d;
 }
-
-/* Progress bar glow */
-.progress-glow {
-  box-shadow: 0 0 12px currentColor;
-}
-
-/* Orb backgrounds */
-.orb {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
+.gradient-text-gold {
+  color: #cfbb9f;
 }
 
 /* Section label */
 .section-label {
-  font-family: "Inter", system-ui, sans-serif;
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(148, 163, 184, 0.6);
+  color: var(--text-muted);
 }
 
 /* Input */
 .dash-input {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: #f1f5f9;
+  color: var(--text-primary);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   outline: none;
   width: 100%;
   transition: border-color 0.2s;
 }
-.dash-input:focus {
-  border-color: rgba(139, 92, 246, 0.5);
-}
-.dash-input::placeholder {
-  color: rgba(148, 163, 184, 0.4);
-}
+.dash-input:focus { border-color: rgba(214, 141, 132, 0.5); }
+.dash-input::placeholder { color: var(--text-faint); }
 
 /* Button */
 .dash-btn {
@@ -129,19 +114,23 @@ body {
   border: none;
 }
 .dash-btn-primary {
-  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  background: #d68d84;
   color: white;
 }
-.dash-btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
+.dash-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
 .dash-btn-ghost {
-  background: rgba(255, 255, 255, 0.06);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
 }
 .dash-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #f1f5f9;
+  background: var(--card-hover);
+  color: var(--text-primary);
 }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+.animate-slide-up { animation: slideUp 0.4s ease-out; }

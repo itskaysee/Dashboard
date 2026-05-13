@@ -1,76 +1,83 @@
 "use client";
+import { useState } from "react";
 import {
   format,
   parseISO,
-  isThisMonth,
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
   isSameDay,
   getDay,
+  isSameMonth,
+  addMonths,
+  subMonths,
 } from "date-fns";
-import { Dumbbell, Calendar } from "lucide-react";
-import DebtTracker from "./DebtTracker";
-import SavingsCounter from "./SavingsCounter";
-import EventsWidget from "./EventsWidget";
-import Reflections from "./Reflections";
-import type {
-  CreditCard,
-  SavingsAccount,
-  GymSession,
-  CalendarEvent,
-  Reflection,
-} from "../types";
+// parseISO and isSameMonth used in MiniCalendar
+import { Dumbbell, ChevronLeft, ChevronRight } from "lucide-react";
+import CurrentlyReadingWidget from "./CurrentlyReading";
+import MonthlyReflections from "./MonthlyReflections";
+import type { GymSession, CurrentlyReading, BookRead, MonthlyReflection } from "../types";
 
 interface Props {
-  creditCards: CreditCard[];
-  setCreditCards: (c: CreditCard[] | ((prev: CreditCard[]) => CreditCard[])) => void;
-  savingsAccounts: SavingsAccount[];
-  setSavingsAccounts: (a: SavingsAccount[] | ((prev: SavingsAccount[]) => SavingsAccount[])) => void;
   gymSessions: GymSession[];
-  events: CalendarEvent[];
-  setEvents: (e: CalendarEvent[] | ((prev: CalendarEvent[]) => CalendarEvent[])) => void;
-  reflections: Reflection[];
-  setReflections: (r: Reflection[] | ((prev: Reflection[]) => Reflection[])) => void;
+  monthlyReflections: MonthlyReflection[];
+  setMonthlyReflections: (r: MonthlyReflection[] | ((prev: MonthlyReflection[]) => MonthlyReflection[])) => void;
+  currentlyReading: CurrentlyReading | null;
+  setCurrentlyReading: (b: CurrentlyReading | null) => void;
+  onBookComplete: (book: BookRead) => void;
 }
 
-function MiniCalendar({ sessions }: { sessions: GymSession[] }) {
+function MiniCalendar({ sessions, month, onPrev, onNext }: {
+  sessions: GymSession[];
+  month: Date;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
   const today = new Date();
-  const start = startOfMonth(today);
-  const end = endOfMonth(today);
+  const start = startOfMonth(month);
+  const end = endOfMonth(month);
   const days = eachDayOfInterval({ start, end });
 
-  // pad start
-  const startDow = getDay(start); // 0=Sun
-  const leadingDays = startDow === 0 ? 6 : startDow - 1; // Monday-first
+  const startDow = getDay(start);
+  const leadingDays = startDow === 0 ? 6 : startDow - 1;
   const padded = Array(leadingDays).fill(null).concat(days);
 
   const sessionDates = sessions.map((s) => s.date);
-  const monthSessions = sessions.filter((s) => isThisMonth(parseISO(s.date)));
+  const monthSessions = sessions.filter((s) => isSameMonth(parseISO(s.date), month));
 
   return (
     <div className="glass rounded-2xl p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
-            <Dumbbell size={15} className="text-cyan-400" />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ background: "#f6efdf", border: "1px solid #e8dfcf" }}>
+            <Dumbbell size={15} style={{ color: "#866a5b" }} />
           </div>
           <div>
-            <p className="section-label">Gym — {format(today, "MMMM")}</p>
-            <p className="text-slate-200 font-semibold text-sm">
+            <p className="section-label">Gym — {format(month, "MMMM yyyy")}</p>
+            <p className="text-sm font-semibold" style={{ color: "#785b4e" }}>
               {monthSessions.length}{" "}
-              <span className="text-slate-500 font-normal">sessions this month</span>
+              <span className="font-normal" style={{ color: "#a2998f" }}>sessions</span>
             </p>
           </div>
         </div>
+        <div className="flex gap-1">
+          <button onClick={onPrev}
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: "#f6efdf", border: "1px solid #e8dfcf" }}>
+            <ChevronLeft size={14} style={{ color: "#a2998f" }} />
+          </button>
+          <button onClick={onNext}
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: "#f6efdf", border: "1px solid #e8dfcf" }}>
+            <ChevronRight size={14} style={{ color: "#a2998f" }} />
+          </button>
+        </div>
       </div>
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 mb-2">
         {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-          <div key={i} className="text-center text-xs font-medium text-slate-600">
-            {d}
-          </div>
+          <div key={i} className="text-center text-xs font-medium" style={{ color: "#c5b9ab" }}>{d}</div>
         ))}
       </div>
 
@@ -86,13 +93,9 @@ function MiniCalendar({ sessions }: { sessions: GymSession[] }) {
               key={dateStr}
               className="aspect-square flex items-center justify-center rounded-lg text-xs font-medium"
               style={{
-                background: isGym
-                  ? "linear-gradient(135deg, #06b6d466, #8b5cf666)"
-                  : isToday
-                  ? "rgba(6,182,212,0.1)"
-                  : "transparent",
-                border: isToday ? "1px solid rgba(6,182,212,0.3)" : "1px solid transparent",
-                color: isGym ? "#e0f2fe" : isToday ? "#06b6d4" : "rgba(148,163,184,0.5)",
+                background: isGym ? "#d68d84" : isToday ? "rgba(214,141,132,0.08)" : "transparent",
+                border: isGym ? "1px solid #c47a72" : isToday ? "1px solid rgba(214,141,132,0.3)" : "1px solid transparent",
+                color: isGym ? "#fff" : isToday ? "#d68d84" : "#c5b9ab",
               }}
             >
               {format(day, "d")}
@@ -104,60 +107,30 @@ function MiniCalendar({ sessions }: { sessions: GymSession[] }) {
   );
 }
 
-function MonthSummary({
-  creditCards,
-  savingsAccounts,
-}: {
-  creditCards: CreditCard[];
-  savingsAccounts: SavingsAccount[];
-}) {
-  const totalDebt = creditCards.reduce((s, c) => s + c.balance, 0);
-  const totalSavings = savingsAccounts.reduce((s, a) => s + a.balance, 0);
-  const netWorth = totalSavings - totalDebt;
-  const fmt = (n: number) =>
-    n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-
-  const stats = [
-    { label: "Total Debt", value: fmt(totalDebt), color: "#f59e0b", bad: true },
-    { label: "Total Savings", value: fmt(totalSavings), color: "#10b981" },
-    { label: "Net Worth", value: (netWorth >= 0 ? "+" : "") + fmt(netWorth), color: netWorth >= 0 ? "#8b5cf6" : "#ef4444" },
-  ];
-
-  return (
-    <div className="grid grid-cols-3 gap-3">
-      {stats.map((s) => (
-        <div key={s.label} className="glass rounded-xl p-4 text-center">
-          <p className="section-label mb-1">{s.label}</p>
-          <p className="text-lg font-bold" style={{ color: s.color }}>
-            {s.value}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function MonthView({
-  creditCards, setCreditCards,
-  savingsAccounts, setSavingsAccounts,
   gymSessions,
-  events, setEvents,
-  reflections, setReflections,
+  monthlyReflections, setMonthlyReflections,
+  currentlyReading, setCurrentlyReading,
+  onBookComplete,
 }: Props) {
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+
   return (
     <div className="space-y-4">
-      <MonthSummary creditCards={creditCards} savingsAccounts={savingsAccounts} />
-
-      <MiniCalendar sessions={gymSessions} />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <DebtTracker cards={creditCards} setCards={setCreditCards} />
-        <SavingsCounter accounts={savingsAccounts} setAccounts={setSavingsAccounts} />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <MiniCalendar
+          sessions={gymSessions}
+          month={selectedMonth}
+          onPrev={() => setSelectedMonth((m) => subMonths(m, 1))}
+          onNext={() => setSelectedMonth((m) => addMonths(m, 1))}
+        />
+        <CurrentlyReadingWidget book={currentlyReading} setBook={setCurrentlyReading} onComplete={onBookComplete} />
       </div>
-
-      <EventsWidget events={events} setEvents={setEvents} filter="month" />
-
-      <Reflections reflections={reflections} setReflections={setReflections} />
+      <MonthlyReflections
+        reflections={monthlyReflections}
+        setReflections={setMonthlyReflections}
+        month={selectedMonth}
+      />
     </div>
   );
 }
