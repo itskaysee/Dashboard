@@ -13,9 +13,10 @@ import {
   subMonths,
 } from "date-fns";
 // parseISO and isSameMonth used in MiniCalendar
-import { Dumbbell, ChevronLeft, ChevronRight } from "lucide-react";
+import { Dumbbell, ChevronLeft, ChevronRight, LayoutGrid, Grid3X3, BookOpen } from "lucide-react";
 import CurrentlyReadingWidget from "./CurrentlyReading";
 import MonthlyReflections from "./MonthlyReflections";
+import BingoCard from "./BingoCard";
 import type { GymSession, CurrentlyReading, BookRead, MonthlyReflection } from "../types";
 
 interface Props {
@@ -107,6 +108,14 @@ function MiniCalendar({ sessions, month, onPrev, onNext }: {
   );
 }
 
+type Section = "overview" | "bingo" | "reflections";
+
+const SECTIONS: { id: Section; label: string; icon: typeof LayoutGrid }[] = [
+  { id: "overview", label: "Overview", icon: LayoutGrid },
+  { id: "bingo", label: "Bingo Card", icon: Grid3X3 },
+  { id: "reflections", label: "Reflections", icon: BookOpen },
+];
+
 export default function MonthView({
   gymSessions,
   monthlyReflections, setMonthlyReflections,
@@ -114,23 +123,54 @@ export default function MonthView({
   onBookComplete,
 }: Props) {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [section, setSection] = useState<Section>("overview");
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <MiniCalendar
-          sessions={gymSessions}
-          month={selectedMonth}
-          onPrev={() => setSelectedMonth((m) => subMonths(m, 1))}
-          onNext={() => setSelectedMonth((m) => addMonths(m, 1))}
-        />
-        <CurrentlyReadingWidget book={currentlyReading} setBook={setCurrentlyReading} onComplete={onBookComplete} />
+    <div className="flex flex-col lg:flex-row gap-4">
+      {/* Left nav */}
+      <nav className="lg:w-48 lg:shrink-0">
+        <div className="glass rounded-2xl p-2 flex lg:flex-col gap-1 overflow-x-auto lg:sticky lg:top-6">
+          {SECTIONS.map((s) => {
+            const Icon = s.icon;
+            const active = section === s.id;
+            return (
+              <button key={s.id} onClick={() => setSection(s.id)}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 lg:w-full"
+                style={{
+                  background: active ? "#f6efdf" : "transparent",
+                  color: active ? "#785b4e" : "#a2998f",
+                  border: active ? "1px solid #e8dfcf" : "1px solid transparent",
+                }}>
+                <Icon size={15} style={{ color: active ? "#866a5b" : "#c5b9ab" }} />
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0 space-y-4">
+        {section === "overview" && (
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <MiniCalendar
+              sessions={gymSessions}
+              month={selectedMonth}
+              onPrev={() => setSelectedMonth((m) => subMonths(m, 1))}
+              onNext={() => setSelectedMonth((m) => addMonths(m, 1))}
+            />
+            <CurrentlyReadingWidget book={currentlyReading} setBook={setCurrentlyReading} onComplete={onBookComplete} />
+          </div>
+        )}
+        {section === "bingo" && <BingoCard />}
+        {section === "reflections" && (
+          <MonthlyReflections
+            reflections={monthlyReflections}
+            setReflections={setMonthlyReflections}
+            month={selectedMonth}
+          />
+        )}
       </div>
-      <MonthlyReflections
-        reflections={monthlyReflections}
-        setReflections={setMonthlyReflections}
-        month={selectedMonth}
-      />
     </div>
   );
 }
