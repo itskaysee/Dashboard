@@ -17,7 +17,7 @@ import { Dumbbell, ChevronLeft, ChevronRight, LayoutGrid, Grid3X3, BookOpen } fr
 import CurrentlyReadingWidget from "./CurrentlyReading";
 import MonthlyReflections from "./MonthlyReflections";
 import BingoCard from "./BingoCard";
-import type { GymSession, CurrentlyReading, BookRead, MonthlyReflection } from "../types";
+import type { GymSession, CurrentlyReading, BookRead, MonthlyReflection, BingoProgress } from "../types";
 
 interface Props {
   gymSessions: GymSession[];
@@ -26,6 +26,8 @@ interface Props {
   currentlyReading: CurrentlyReading | null;
   setCurrentlyReading: (b: CurrentlyReading | null) => void;
   onBookComplete: (book: BookRead) => void;
+  bingoProgress: BingoProgress[];
+  setBingoProgress: (p: BingoProgress[] | ((prev: BingoProgress[]) => BingoProgress[])) => void;
 }
 
 function MiniCalendar({ sessions, month, onPrev, onNext }: {
@@ -121,6 +123,7 @@ export default function MonthView({
   monthlyReflections, setMonthlyReflections,
   currentlyReading, setCurrentlyReading,
   onBookComplete,
+  bingoProgress, setBingoProgress,
 }: Props) {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [section, setSection] = useState<Section>("overview");
@@ -162,7 +165,7 @@ export default function MonthView({
             <CurrentlyReadingWidget book={currentlyReading} setBook={setCurrentlyReading} onComplete={onBookComplete} />
           </div>
         )}
-        {section === "bingo" && <BingoCard />}
+        {section === "bingo" && <BingoCard progress={bingoProgress} setProgress={setBingoProgress} />}
         {section === "reflections" && (
           <MonthlyReflections
             reflections={monthlyReflections}

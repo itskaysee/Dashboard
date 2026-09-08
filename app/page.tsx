@@ -27,6 +27,7 @@ import type {
   YearlyReflection,
   YearlyBucket,
   BucketListItem,
+  BingoProgress,
 } from "./types";
 import { DEFAULT_HABITS } from "./components/HabitTracker";
 
@@ -66,6 +67,7 @@ export default function Dashboard() {
   const [yearlyReflections, setYearlyReflections] = useState<YearlyReflection[]>([]);
   const [yearlyBuckets, setYearlyBuckets] = useState<YearlyBucket[]>([]);
   const [bucketList, setBucketList] = useState<BucketListItem[]>([]);
+  const [bingoProgress, setBingoProgress] = useState<BingoProgress[]>([]);
 
   useEffect(() => {
     fetch("/api/data")
@@ -90,6 +92,7 @@ export default function Dashboard() {
         if (d.yearlyReflections) setYearlyReflections(d.yearlyReflections as YearlyReflection[]);
         if (d.yearlyBuckets) setYearlyBuckets(d.yearlyBuckets as YearlyBucket[]);
         if (d.bucketList) setBucketList(d.bucketList as BucketListItem[]);
+        if (d.bingoProgress) setBingoProgress(d.bingoProgress as BingoProgress[]);
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
@@ -125,12 +128,14 @@ export default function Dashboard() {
       tasks, reflections, focusData, achievements, quarterlyGoals,
       parkingLot, habitLogs, devotionalEntries, currentlyReading, booksRead,
       monthlyReflections, customHabits, yearlyReflections, yearlyBuckets, bucketList,
+      bingoProgress,
     }),
     [
       creditCards, savingsAccounts, gymSessions, events, tasks,
       reflections, focusData, achievements, quarterlyGoals,
       parkingLot, habitLogs, devotionalEntries, currentlyReading, booksRead,
       monthlyReflections, customHabits, yearlyReflections, yearlyBuckets, bucketList,
+      bingoProgress,
     ]
   );
 
@@ -215,6 +220,7 @@ export default function Dashboard() {
               monthlyReflections={monthlyReflections} setMonthlyReflections={setMonthlyReflections}
               currentlyReading={currentlyReading} setCurrentlyReading={setCurrentlyReading}
               onBookComplete={handleBookComplete}
+              bingoProgress={bingoProgress} setBingoProgress={setBingoProgress}
             />
           )}
           {tab === "quarter" && (

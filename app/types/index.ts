@@ -154,3 +154,8 @@ export interface MonthlyReflection {
   monthKey: string; // e.g. "2026-04"
   answers: Record<string, string>; // questionId → answer
 }
+
+export interface BingoProgress {
+  monthKey: string;   // e.g. "2026-09" — the month of the bingo card
+  completed: number[]; // indices 0-8 of crossed-off squares
+}
